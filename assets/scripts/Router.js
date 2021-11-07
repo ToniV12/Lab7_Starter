@@ -73,7 +73,7 @@ export class Router {
     }
     if(page == 'home'){
       hash = "";
-      this['home']();
+      //this['home']();
     }
     else{
       hash = '#' + page;
