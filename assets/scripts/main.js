@@ -25,6 +25,8 @@ const router = new Router(function () {
    * This will only be two single lines
    * If you did this right, you should see just 1 recipe card rendered to the screen
    */
+  document.querySelector('.section--recipe-cards').classList.add("shown");
+  document.querySelector('.section--recipe-expand').classList.remove("shown");
 });
 
 window.addEventListener('DOMContentLoaded', init);
@@ -89,7 +91,7 @@ async function fetchRecipes() {
  */
 function createRecipeCards() {
   // Makes a new recipe card
-  const recipeCard = document.createElement('recipe-card');
+  /*const recipeCard = document.createElement('recipe-card');
   // Inputs the data for the card. This is just the first recipe in the recipes array,
   // being used as the key for the recipeData object
   recipeCard.data = recipeData[recipes[0]];
@@ -108,7 +110,7 @@ function createRecipeCards() {
   bindRecipeCard(recipeCard, page);
 
   document.querySelector('.recipe-cards--wrapper').appendChild(recipeCard);
-
+  */ 
   /**
    * TODO - Part 1 - Step 3
    * Above I made an example card and added a route for the recipe at index 0 in
@@ -119,6 +121,23 @@ function createRecipeCards() {
    * After this step you should see multiple cards rendered like the end of the last
    * lab
    */
+  //transcribed above code to create recipe cards with a for loop
+  for(let i = 0; i < Object.keys(recipeData).length; i ++){
+    const recCard = document.createElement('recipe-card');
+    recCard.data = recipeData[recipes[i]];
+    //console.log(recCard.data);
+    const pag = recipeData[recipes[i]]['page-name']; // create the page name for the router 
+    if (i >2){
+      recCard.classList.add('hidden'); // allow for show more functionality
+    }
+    router.addPage(pag, function() { // add page funcs to the router for each card
+      document.querySelector('.section--recipe-cards').classList.remove('shown');
+      document.querySelector('.section--recipe-expand').classList.add('shown');
+      document.querySelector('recipe-expand').data = recipeData[recipes[i]];
+    });
+    bindRecipeCard(recCard, pag);
+    document.querySelector('.recipe-cards--wrapper').appendChild(recCard);
+  }
 }
 
 /**
@@ -174,6 +193,11 @@ function bindEscKey() {
    * if the escape key is pressed, use your router to navigate() to the 'home'
    * page. This will let us go back to the home page from the detailed page.
    */
+  document.addEventListener('keydown', e =>{
+    if(e.code == 'Escape'){
+      router.navigate('home');
+    }
+  });
 }
 
 /**
@@ -195,4 +219,12 @@ function bindPopstate() {
    * so your navigate() function does not add your going back action to the history,
    * creating an infinite loop
    */
+  window.addEventListener('popstate', (event) =>{
+    if(event.state){
+      router.navigate(event.state, true);
+    }
+    else{
+      router.navigate('home');
+    }
+  })
 }
